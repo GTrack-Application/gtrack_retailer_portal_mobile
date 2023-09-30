@@ -11,19 +11,15 @@ class EventsScreenController {
     final url = Uri.parse(
         "${AppUrls.domain}/api/search/event/gtin/with/maps?gtin=$gtin");
 
-    try {
-      final response = await http.get(url);
-      if (response.statusCode == 200) {
-        final List<dynamic> responseData =
-            jsonDecode(response.body)['gtinInformation'] as List<dynamic>;
-        for (var element in responseData) {
-          events.add(EventsScreenModel.fromJson(element));
-        }
-      } else {
-        return events;
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      final List<dynamic> responseData =
+          jsonDecode(response.body)['gtinInformation'] as List<dynamic>;
+      for (var element in responseData) {
+        events.add(EventsScreenModel.fromJson(element));
       }
-    } catch (error) {
-      rethrow;
+    } else {
+      return events;
     }
 
     return events;

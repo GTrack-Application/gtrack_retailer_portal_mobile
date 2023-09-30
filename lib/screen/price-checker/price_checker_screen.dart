@@ -19,6 +19,7 @@ class _PriceCheckerScreenState extends State<PriceCheckerScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text('Price Checker')),
       body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
         child: Column(
           children: [
             Row(

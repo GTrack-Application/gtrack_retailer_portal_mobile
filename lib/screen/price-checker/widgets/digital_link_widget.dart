@@ -108,7 +108,13 @@ class _DigitalLinkScreenState extends State<DigitalLinkScreen> {
               ),
             ),
             // Create list of radio list based on above data variable but we will be able to select only one at a time.
-            ListView.builder(
+            GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 5,
+                mainAxisSpacing: 5,
+                childAspectRatio: 7.0,
+              ),
               shrinkWrap: true,
               itemCount: data.length,
               physics: const NeverScrollableScrollPhysics(),
@@ -120,21 +126,36 @@ class _DigitalLinkScreenState extends State<DigitalLinkScreen> {
                     });
                   },
                   child: Container(
+                    alignment: Alignment.centerLeft,
                     margin: const EdgeInsets.only(top: 5),
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     decoration: BoxDecoration(
-                      color: selectedIndex == index
-                          ? AppColors.orange
-                          : AppColors.orange.withOpacity(0.2),
+                      color: index == 0
+                          ? AppColors.primary
+                          : index == 1
+                              ? AppColors.skyBlue
+                              : index == 2
+                                  ? Colors.blue
+                                  : index == 3
+                                      ? AppColors.danger
+                                      : index == 4
+                                          ? Colors.blue[900]
+                                          : index == 5
+                                              ? AppColors.green
+                                              : index == 6
+                                                  ? AppColors.danger
+                                                  : index == 7
+                                                      ? Colors.red[900]
+                                                      : AppColors.green,
                       border: Border.all(width: 1, color: AppColors.green),
                       borderRadius: BorderRadius.circular(5),
                     ),
                     child: Text(
                       data[index],
-                      style: TextStyle(
-                        color: (selectedIndex == index)
-                            ? AppColors.white
-                            : AppColors.black,
+                      style: const TextStyle(
+                        color: AppColors.white,
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
