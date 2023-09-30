@@ -7,7 +7,6 @@ import 'package:gtrack_retailer_portal/blocs/share/product_information/gtin_info
 import 'package:gtrack_retailer_portal/common/colors/app_colors.dart';
 import 'package:gtrack_retailer_portal/models/share/product_information/gtin_information_model.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:nb_utils/nb_utils.dart';
 
 GtinInformationModel? gtinInformationModel;
 
@@ -49,85 +48,105 @@ class _GtinInformationWidgetState extends State<GtinInformationWidget> {
         } else if (state is GlobalErrorState) {
           return Center(child: Text(state.message));
         } else if (state is GlobalLoadedState) {
-          return Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Column(
-                  children: [
-                    Container(
-                      height: 200,
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: AppColors.grey,
-                          width: 1,
+          return Container(
+            margin: const EdgeInsets.all(5),
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: AppColors.grey,
+                width: 1,
+              ),
+              borderRadius: BorderRadius.circular(5),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(
+                  flex: 3,
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        BorderedRowWidget(
+                          value1: "GTIN",
+                          value2:
+                              gtinInformationModel!.gtinArr!.gtin.toString(),
                         ),
-                        borderRadius: BorderRadius.circular(5),
-                        image: DecorationImage(
-                          alignment: Alignment.center,
-                          fit: BoxFit.contain,
-                          onError: (exception, stackTrace) => const Icon(
-                            Ionicons.image_outline,
-                          ),
-                          image: CachedNetworkImageProvider(
-                            gtinInformationModel!.gtinArr!.productImageUrl
-                                .toString(),
-                          ),
+                        BorderedRowWidget(
+                          value1: "Brand name",
+                          value2: gtinInformationModel!.gtinArr!.brandName
+                              .toString(),
+                        ),
+                        BorderedRowWidget(
+                          value1: "Product Description",
+                          value2: gtinInformationModel!
+                              .gtinArr!.productDescription
+                              .toString(),
+                        ),
+                        BorderedRowWidget(
+                          value1: "Image URL",
+                          value2: gtinInformationModel!.gtinArr!.productImageUrl
+                              .toString(),
+                        ),
+                        BorderedRowWidget(
+                          value1: "Global Product Category",
+                          value2: gtinInformationModel!.gtinArr!.gpcCategoryCode
+                              .toString(),
+                        ),
+                        // const BorderedRowWidget(
+                        //     value1: "Net Content", value2: gtinInformationModel!.gtinArr!.),
+                        BorderedRowWidget(
+                          value1: "Country Of Sale",
+                          value2: gtinInformationModel!
+                              .gtinArr!.countryOfSaleCode
+                              .toString(),
+                        ),
+                        // 30.height,
+                        // PaginatedDataTable(
+                        //   columns: const [
+                        //     DataColumn(label: Text("Allergen Info")),
+                        //     DataColumn(label: Text("Nutrients Info")),
+                        //     DataColumn(label: Text("Batch")),
+                        //     DataColumn(label: Text("Expiry")),
+                        //     DataColumn(label: Text("Serial")),
+                        //     DataColumn(label: Text("Manufecturing Date")),
+                        //     DataColumn(label: Text("Best Before")),
+                        //   ],
+                        //   source: GtinInformationSource(),
+                        //   arrowHeadColor: AppColors.green,
+                        //   showCheckboxColumn: false,
+                        //   rowsPerPage: 5,
+                        // ),
+                      ],
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    width: 500,
+                    height: 200,
+                    decoration: BoxDecoration(
+                      // border: Border.all(
+                      //   color: AppColors.grey,
+                      //   width: 1,
+                      // ),
+                      borderRadius: BorderRadius.circular(5),
+                      image: DecorationImage(
+                        alignment: Alignment.center,
+                        fit: BoxFit.contain,
+                        onError: (exception, stackTrace) => const Icon(
+                          Ionicons.image_outline,
+                        ),
+                        image: CachedNetworkImageProvider(
+                          gtinInformationModel!.gtinArr!.productImageUrl
+                              .toString(),
                         ),
                       ),
                     ),
-                    const SizedBox(height: 10),
-                    BorderedRowWidget(
-                      value1: "GTIN",
-                      value2: gtinInformationModel!.gtinArr!.gtin.toString(),
-                    ),
-                    BorderedRowWidget(
-                      value1: "Brand name",
-                      value2:
-                          gtinInformationModel!.gtinArr!.brandName.toString(),
-                    ),
-                    BorderedRowWidget(
-                      value1: "Product Description",
-                      value2: gtinInformationModel!.gtinArr!.productDescription
-                          .toString(),
-                    ),
-                    BorderedRowWidget(
-                      value1: "Image URL",
-                      value2: gtinInformationModel!.gtinArr!.productImageUrl
-                          .toString(),
-                    ),
-                    BorderedRowWidget(
-                      value1: "Global Product Category",
-                      value2: gtinInformationModel!.gtinArr!.gpcCategoryCode
-                          .toString(),
-                    ),
-                    // const BorderedRowWidget(
-                    //     value1: "Net Content", value2: gtinInformationModel!.gtinArr!.),
-                    BorderedRowWidget(
-                      value1: "Country Of Sale",
-                      value2: gtinInformationModel!.gtinArr!.countryOfSaleCode
-                          .toString(),
-                    ),
-                    30.height,
-                    // PaginatedDataTable(
-                    //   columns: const [
-                    //     DataColumn(label: Text("Allergen Info")),
-                    //     DataColumn(label: Text("Nutrients Info")),
-                    //     DataColumn(label: Text("Batch")),
-                    //     DataColumn(label: Text("Expiry")),
-                    //     DataColumn(label: Text("Serial")),
-                    //     DataColumn(label: Text("Manufecturing Date")),
-                    //     DataColumn(label: Text("Best Before")),
-                    //   ],
-                    //   source: GtinInformationSource(),
-                    //   arrowHeadColor: AppColors.green,
-                    //   showCheckboxColumn: false,
-                    //   rowsPerPage: 5,
-                    // ),
-                  ],
+                  ),
                 ),
-              )
-            ],
+              ],
+            ),
           );
         }
         return const Center(child: Text("Something went wrong"));
@@ -159,7 +178,7 @@ class BorderedRowWidget extends StatelessWidget {
               child: Text(
                 value1,
                 style: const TextStyle(
-                  fontSize: 15,
+                  fontSize: 12,
                 ),
               ),
             ),
@@ -167,7 +186,7 @@ class BorderedRowWidget extends StatelessWidget {
               child: AutoSizeText(
                 value2,
                 style: const TextStyle(
-                  fontSize: 15,
+                  fontSize: 12,
                   fontWeight: FontWeight.bold,
                 ),
               ),

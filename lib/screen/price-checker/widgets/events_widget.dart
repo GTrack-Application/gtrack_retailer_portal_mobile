@@ -283,7 +283,7 @@ class _EventsWidgetState extends State<EventsWidget> {
         //         ),
         // );
         isLoaded == false
-            ? const CircularProgressIndicator()
+            ? const Center(child: CircularProgressIndicator())
             : GoogleMap(
                 fortyFiveDegreeImageryEnabled: false,
                 onMapCreated: (GoogleMapController controller) {

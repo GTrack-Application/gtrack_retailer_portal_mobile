@@ -24,17 +24,18 @@ class _PriceCheckerScreenState extends State<PriceCheckerScreen> {
               children: [
                 Container(
                   height: context.height(),
-                  width: context.width() * 0.5,
+                  width: context.width() * 0.6,
                   child: Column(
                     children: [
                       GtinInformationWidget(gtin: gtin, codeType: codeType),
+                      20.height,
                       EventsWidget(gtin: gtin, codeType: codeType),
                     ],
                   ),
                 ),
                 Container(
                   height: context.height(),
-                  width: context.width() * 0.5,
+                  width: context.width() * 0.4,
                   child: Column(
                     children: [],
                   ),
