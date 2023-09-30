@@ -7,7 +7,6 @@ import 'package:gtrack_retailer_portal/blocs/share/product_information/gtin_info
 import 'package:gtrack_retailer_portal/common/colors/app_colors.dart';
 import 'package:gtrack_retailer_portal/models/share/product_information/gtin_information_model.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:nb_utils/nb_utils.dart';
 
 GtinInformationModel? gtinInformationModel;
 
