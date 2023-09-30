@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gtrack_retailer_portal/common/colors/app_colors.dart';
+import 'package:gtrack_retailer_portal/common/themes/themes.dart';
 import 'package:gtrack_retailer_portal/screen/price-checker/price_checker_screen.dart';
 
 void main() {
@@ -14,10 +14,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Gtrack Retailer Port',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primary),
-        useMaterial3: true,
-      ),
+      theme: Themes.lightTheme(),
       home: const PriceCheckerScreen(),
     );
   }

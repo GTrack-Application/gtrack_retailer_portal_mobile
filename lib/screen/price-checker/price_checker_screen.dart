@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:gtrack_retailer_portal/screen/price-checker/widgets/events_widget.dart';
 import 'package:gtrack_retailer_portal/screen/price-checker/widgets/gtin_information.dart';
+import 'package:nb_utils/nb_utils.dart';
 
 class PriceCheckerScreen extends StatefulWidget {
   const PriceCheckerScreen({Key? key}) : super(key: key);
@@ -15,25 +17,32 @@ class _PriceCheckerScreenState extends State<PriceCheckerScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Price Checker')),
-      body: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            flex: 5,
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  GtinInformationWidget(gtin: gtin, codeType: codeType),
-                ],
-              ),
-            ),
-          ),
-          Expanded(
-            flex: 3,
-            child: Container(),
-          ),
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Container(
+                  height: context.height(),
+                  width: context.width() * 0.5,
+                  child: Column(
+                    children: [
+                      GtinInformationWidget(gtin: gtin, codeType: codeType),
+                      EventsWidget(gtin: gtin, codeType: codeType),
+                    ],
+                  ),
+                ),
+                Container(
+                  height: context.height(),
+                  width: context.width() * 0.5,
+                  child: Column(
+                    children: [],
+                  ),
+                ),
+              ],
+            )
+          ],
+        ),
       ),
     );
   }
