@@ -17,7 +17,9 @@ class _PriceCheckerScreenState extends State<PriceCheckerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Price Checker')),
+      appBar: AppBar(
+        title: const Text('Price Checker'),
+      ),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: Column(
@@ -39,7 +41,10 @@ class _PriceCheckerScreenState extends State<PriceCheckerScreen> {
                   width: context.width() * 0.4,
                   child: Column(
                     children: [
-                      DigitalLinkScreen(gtin: gtin, codeType: codeType),
+                      DigitalLinkScreen(
+                        gtin: gtin,
+                        codeType: codeType,
+                      ),
                     ],
                   ),
                 ),

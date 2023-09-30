@@ -11,6 +11,7 @@ import 'package:gtrack_retailer_portal/models/share/product_information/product_
 import 'package:gtrack_retailer_portal/models/share/product_information/promotional_offer_model.dart';
 import 'package:gtrack_retailer_portal/models/share/product_information/recipe_model.dart';
 import 'package:gtrack_retailer_portal/models/share/product_information/safety_information_model.dart';
+import 'package:nb_utils/nb_utils.dart';
 
 // Some global variables
 List<SafetyInfromationModel> safetyInformation = [];
@@ -38,12 +39,12 @@ class DigitalLinkScreen extends StatefulWidget {
 class _DigitalLinkScreenState extends State<DigitalLinkScreen> {
   final List data = [
     "Safety Information",
-    "Promotional Offers",
-    "Product Contents",
-    "Product Location Of Origin",
     "Product Recall",
+    "Promotional Offers",
     "Recipe",
+    "Product Contents",
     "Packaging Composition",
+    "Product Location Of Origin",
     "Electronic Leaflets",
   ];
 
@@ -60,13 +61,13 @@ class _DigitalLinkScreenState extends State<DigitalLinkScreen> {
       gtin = widget.gtin.substring(1, 14);
     }
     screens.insert(0, SafetyInformation(gtin: gtin ?? ""));
-    screens.insert(1, PromotionalOffers(gtin: gtin ?? ""));
-    screens.insert(2, ProductContents(gtin: gtin ?? ""));
-    screens.insert(3, ProductLocationOfOrigin(gtin: widget.gtin));
-    screens.insert(4, ProductRecall(gtin: widget.gtin));
-    screens.insert(5, Recipe(gtin: widget.gtin));
-    screens.insert(6, PackagingComposition(gtin: widget.gtin));
-    screens.insert(7, ElectronicLeaflets(gtin: widget.gtin));
+    screens.insert(1, ProductRecall(gtin: gtin ?? ""));
+    screens.insert(2, PromotionalOffers(gtin: gtin ?? ""));
+    screens.insert(3, Recipe(gtin: gtin ?? ""));
+    screens.insert(4, ProductContents(gtin: gtin ?? ""));
+    screens.insert(5, PackagingComposition(gtin: gtin ?? ""));
+    screens.insert(6, ProductLocationOfOrigin(gtin: gtin ?? ""));
+    screens.insert(7, ElectronicLeaflets(gtin: gtin ?? ""));
 
     super.initState();
   }
@@ -113,7 +114,7 @@ class _DigitalLinkScreenState extends State<DigitalLinkScreen> {
                 crossAxisCount: 2,
                 crossAxisSpacing: 5,
                 mainAxisSpacing: 5,
-                childAspectRatio: 7.0,
+                childAspectRatio: 6.0,
               ),
               shrinkWrap: true,
               itemCount: data.length,
@@ -147,7 +148,6 @@ class _DigitalLinkScreenState extends State<DigitalLinkScreen> {
                                                   : index == 7
                                                       ? Colors.red[900]
                                                       : AppColors.green,
-                      border: Border.all(width: 1, color: AppColors.green),
                       borderRadius: BorderRadius.circular(5),
                     ),
                     child: Text(
@@ -164,11 +164,19 @@ class _DigitalLinkScreenState extends State<DigitalLinkScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 5),
             ),
             const Divider(thickness: 2, color: AppColors.green),
-            Text(
-              data[selectedIndex],
-              style: const TextStyle(
-                fontSize: 25,
-                fontWeight: FontWeight.bold,
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              width: context.width(),
+              decoration: const BoxDecoration(
+                color: AppColors.primary,
+              ),
+              child: const Text(
+                "Detailed Information",
+                style: TextStyle(
+                  fontSize: 25,
+                  color: AppColors.white,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
             screens[selectedIndex],
@@ -188,11 +196,15 @@ class SafetyInformation extends StatefulWidget {
 }
 
 class _SafetyInformationState extends State<SafetyInformation> {
+  bool isLoaded = false;
   @override
   void initState() {
     setState(() {
       SafetyInfromationController.getSafeInfromation(widget.gtin).then((value) {
         safetyInformation = value;
+        setState(() {
+          isLoaded = true;
+        });
       });
     });
     super.initState();
@@ -200,23 +212,37 @@ class _SafetyInformationState extends State<SafetyInformation> {
 
   @override
   Widget build(BuildContext context) {
-    return PaginatedDataTable(
-      columns: const [
-        DataColumn(label: Text("Id")),
-        DataColumn(label: Text("Safety Details Information")),
-        DataColumn(label: Text("Link Type")),
-        DataColumn(label: Text("Language")),
-        DataColumn(label: Text("Target URL")),
-        DataColumn(label: Text("GTIN")),
-        DataColumn(label: Text("Logo")),
-        DataColumn(label: Text("Company Name")),
-        DataColumn(label: Text("Process")),
-      ],
-      source: SafetyInformationSource(),
-      arrowHeadColor: AppColors.green,
-      showCheckboxColumn: false,
-      rowsPerPage: 3,
-    );
+    return !isLoaded
+        ? const Center(
+            child: CircularProgressIndicator(),
+          )
+        : Container(
+            width: context.width(),
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: AppColors.grey,
+                width: 1,
+              ),
+              borderRadius: BorderRadius.circular(5),
+            ),
+            child: Column(
+              children: <Widget>[
+                KeyValueWidget(
+                    value1: "Safety Information",
+                    value2:
+                        safetyInformation[0].safetyDetailedInformation ?? ""),
+                KeyValueWidget(
+                    value1: "Link Type",
+                    value2: safetyInformation[0].linkType ?? ""),
+                KeyValueWidget(
+                    value1: "Target Url",
+                    value2: safetyInformation[0].targetURL ?? ""),
+                KeyValueWidget(
+                    value1: "Company Name",
+                    value2: safetyInformation[0].companyName ?? ""),
+              ],
+            ),
+          );
   }
 }
 
@@ -261,12 +287,16 @@ class PromotionalOffers extends StatefulWidget {
 }
 
 class _PromotionalOffersState extends State<PromotionalOffers> {
+  bool isLoaded = false;
   @override
   void initState() {
     setState(() {
       ProductInformationController.getPromotionalOffer(widget.gtin)
           .then((value) {
         promotionalOffer = value;
+        setState(() {
+          isLoaded = true;
+        });
       });
     });
     super.initState();
@@ -274,71 +304,39 @@ class _PromotionalOffersState extends State<PromotionalOffers> {
 
   @override
   Widget build(BuildContext context) {
-    return PaginatedDataTable(
-      columns: const [
-        DataColumn(label: Text("Id")),
-        DataColumn(label: Text("Promotional Offers")),
-        DataColumn(label: Text("Link Type")),
-        DataColumn(label: Text("Language")),
-        DataColumn(label: Text("Target URL")),
-        DataColumn(label: Text("GTIN")),
-        DataColumn(label: Text("Expiry Date")),
-        DataColumn(label: Text("Price")),
-        DataColumn(label: Text("Banner")),
-      ],
-      source: PromotionalOfferSource(),
-      arrowHeadColor: AppColors.green,
-      showCheckboxColumn: false,
-      rowsPerPage: 3,
-    );
-    // return Scaffold(
-    //   appBar: AppBar(
-    //     title: const Text("Promotional Offers"),
-    //     backgroundColor: AppColors.green,
-    //   ),
-    //   body: FutureBuilder(
-    //     future: ProductInformationController.getPromotionalOffer(widget.gtin),
-    //     builder: (context, snapshot) {
-    //       if (snapshot.connectionState == ConnectionState.waiting) {
-    //         return const Center(
-    //           child: LoadingWidget(),
-    //         );
-    //       } else if (snapshot.hasError) {
-    //         return const Center(
-    //           child: Text("Something went wrong"),
-    //         );
-    //       } else if (!snapshot.hasData) {
-    //         return const Center(
-    //           child: Text("No data available"),
-    //         );
-    //       } else {
-    //         return Column(
-    //           children: [
-    //             Expanded(
-    //               child: PaginatedDataTable(
-    //                 columns: const [
-    //                   DataColumn(label: Text("Id")),
-    //                   DataColumn(label: Text("Promotional Offers")),
-    //                   DataColumn(label: Text("Link Type")),
-    //                   DataColumn(label: Text("Language")),
-    //                   DataColumn(label: Text("Target URL")),
-    //                   DataColumn(label: Text("GTIN")),
-    //                   DataColumn(label: Text("Expiry Date")),
-    //                   DataColumn(label: Text("Price")),
-    //                   DataColumn(label: Text("Banner")),
-    //                 ],
-    //                 source: PromotionalOfferSource(),
-    //                 arrowHeadColor: AppColors.green,
-    //                 showCheckboxColumn: false,
-    //                 rowsPerPage: 40,
-    //               ),
-    //             ),
-    //           ],
-    //         );
-    //       }
-    //     },
-    //   ),
-    // );
+    return !isLoaded
+        ? const Center(
+            child: CircularProgressIndicator(),
+          )
+        : Container(
+            width: context.width(),
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: AppColors.grey,
+                width: 1,
+              ),
+              borderRadius: BorderRadius.circular(5),
+            ),
+            child: Column(
+              children: <Widget>[
+                KeyValueWidget(
+                    value1: "Promotional Offers",
+                    value2: promotionalOffer[0].promotionalOffers ?? ""),
+                KeyValueWidget(
+                    value1: "Link Type",
+                    value2: promotionalOffer[0].linkType ?? ""),
+                KeyValueWidget(
+                    value1: "Target URL",
+                    value2: promotionalOffer[0].targetURL ?? ""),
+                KeyValueWidget(
+                  value1: "Price",
+                  value2: promotionalOffer[0].price.toString() == "null"
+                      ? "0"
+                      : promotionalOffer[0].price.toString(),
+                ),
+              ],
+            ),
+          );
   }
 }
 
@@ -383,6 +381,7 @@ class ProductContents extends StatefulWidget {
 }
 
 class _ProductContentsState extends State<ProductContents> {
+  bool isLoaded = false;
   @override
   void initState() {
     super.initState();
@@ -390,95 +389,53 @@ class _ProductContentsState extends State<ProductContents> {
       ProductInformationController.getProductContents(widget.gtin)
           .then((value) {
         productContents = value;
+        setState(() {
+          isLoaded = true;
+        });
       });
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return PaginatedDataTable(
-      columns: const [
-        DataColumn(label: Text("Id")),
-        DataColumn(label: Text("Product Allergen Information")),
-        DataColumn(label: Text("Product Nutrient Information")),
-        DataColumn(label: Text("GTIN")),
-        DataColumn(label: Text("Link Type")),
-        DataColumn(label: Text("Batch")),
-        DataColumn(label: Text("Expiry")),
-        DataColumn(label: Text("Serial")),
-        DataColumn(label: Text("Manufecturing Date")),
-        DataColumn(label: Text("Best Before")),
-        DataColumn(label: Text("GLNID Form")),
-        DataColumn(label: Text("Unit Price")),
-        DataColumn(label: Text("Ingredients")),
-        DataColumn(label: Text("Allergen Info")),
-        DataColumn(label: Text("Calories")),
-        DataColumn(label: Text("Sugar")),
-        DataColumn(label: Text("Salt")),
-        DataColumn(label: Text("Fat")),
-      ],
-      source: ProductContentsSource(),
-      arrowHeadColor: AppColors.green,
-      showCheckboxColumn: false,
-      rowsPerPage: 3,
-    );
-    // return Scaffold(
-    //   appBar: AppBar(
-    //     title: const Text("Product Contents"),
-    //     backgroundColor: AppColors.green,
-    //   ),
-    //   body: FutureBuilder(
-    //     future: ProductInformationController.getProductContents(widget.gtin),
-    //     builder: (context, snapshot) {
-    //       if (snapshot.connectionState == ConnectionState.waiting) {
-    //         return const Center(
-    //           child: LoadingWidget(),
-    //         );
-    //       } else if (snapshot.hasError) {
-    //         return const Center(
-    //           child: Text("Something went wrong"),
-    //         );
-    //       } else if (!snapshot.hasData) {
-    //         return const Center(
-    //           child: Text("No data available"),
-    //         );
-    //       } else {
-    //         return Column(
-    //           children: [
-    //             Expanded(
-    //               child: PaginatedDataTable(
-    //                 columns: const [
-    //                   DataColumn(label: Text("Id")),
-    //                   DataColumn(label: Text("Product Allergen Information")),
-    //                   DataColumn(label: Text("Product Nutrient Information")),
-    //                   DataColumn(label: Text("GTIN")),
-    //                   DataColumn(label: Text("Link Type")),
-    //                   DataColumn(label: Text("Batch")),
-    //                   DataColumn(label: Text("Expiry")),
-    //                   DataColumn(label: Text("Serial")),
-    //                   DataColumn(label: Text("Manufecturing Date")),
-    //                   DataColumn(label: Text("Best Before")),
-    //                   DataColumn(label: Text("GLNID Form")),
-    //                   DataColumn(label: Text("Unit Price")),
-    //                   DataColumn(label: Text("Ingredients")),
-    //                   DataColumn(label: Text("Allergen Info")),
-    //                   DataColumn(label: Text("Calories")),
-    //                   DataColumn(label: Text("Sugar")),
-    //                   DataColumn(label: Text("Salt")),
-    //                   DataColumn(label: Text("Fat")),
-    //                 ],
-    //                 source: ProductContentsSource(),
-    //                 arrowHeadColor: AppColors.green,
-    //                 showCheckboxColumn: false,
-    //                 rowsPerPage: 40,
-    //               ),
-    //             ),
-    //           ],
-    //         );
-    //       }
-    //     },
-    //   ),
-    // );
+    return !isLoaded
+        ? const Center(
+            child: CircularProgressIndicator(),
+          )
+        : Container(
+            width: context.width(),
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: AppColors.grey,
+                width: 1,
+              ),
+              borderRadius: BorderRadius.circular(5),
+            ),
+            child: Column(
+              children: <Widget>[
+                KeyValueWidget(
+                  value1: "Product Allergen Informaion",
+                  value2: productContents[0].productAllergenInformation ?? "",
+                ),
+                KeyValueWidget(
+                  value1: "Allergen Info",
+                  value2: productContents[0].allergenInfo ?? "",
+                ),
+                KeyValueWidget(
+                  value1: "Ingredients",
+                  value2: productContents[0].ingredients ?? "",
+                ),
+                KeyValueWidget(
+                  value1: "Manufacturing Date",
+                  value2: productContents[0].manufacturingDate ?? "",
+                ),
+                KeyValueWidget(
+                  value1: "Best before Date",
+                  value2: productContents[0].bestBeforeDate ?? "",
+                ),
+              ],
+            ),
+          );
   }
 }
 
@@ -534,6 +491,7 @@ class ProductLocationOfOrigin extends StatefulWidget {
 }
 
 class _ProductLocationOfOriginState extends State<ProductLocationOfOrigin> {
+  bool isLoaded = false;
   @override
   void initState() {
     super.initState();
@@ -541,27 +499,49 @@ class _ProductLocationOfOriginState extends State<ProductLocationOfOrigin> {
       ProductInformationController.getProductLocationOrigin(widget.gtin)
           .then((value) {
         locationOrigin = value;
+        setState(() {
+          isLoaded = true;
+        });
       });
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return PaginatedDataTable(
-      columns: const [
-        DataColumn(label: Text("Id")),
-        DataColumn(label: Text("Product Location Origin")),
-        DataColumn(label: Text("Link Type")),
-        DataColumn(label: Text("Language")),
-        DataColumn(label: Text("Target URL")),
-        DataColumn(label: Text("GTIN")),
-        DataColumn(label: Text("Expiry Date")),
-      ],
-      source: ProductLocationOriginSource(),
-      arrowHeadColor: AppColors.green,
-      showCheckboxColumn: false,
-      rowsPerPage: 3,
-    );
+    return !isLoaded
+        ? const Center(
+            child: CircularProgressIndicator(),
+          )
+        : Container(
+            width: context.width(),
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: AppColors.grey,
+                width: 1,
+              ),
+              borderRadius: BorderRadius.circular(5),
+            ),
+            child: Column(
+              children: <Widget>[
+                KeyValueWidget(
+                  value1: "Product Location Origin",
+                  value2: locationOrigin[0].productLocationOrigin ?? "",
+                ),
+                KeyValueWidget(
+                  value1: "Link Type",
+                  value2: locationOrigin[0].linkType ?? "",
+                ),
+                KeyValueWidget(
+                  value1: "GTIN",
+                  value2: locationOrigin[0].gTIN ?? "",
+                ),
+                // KeyValueWidget(
+                //   value1: "Manufacturing Date",
+                //   value2: locationOrigin[0]. ?? "",
+                // ),
+              ],
+            ),
+          );
   }
 }
 
@@ -604,6 +584,7 @@ class ProductRecall extends StatefulWidget {
 }
 
 class _ProductRecallState extends State<ProductRecall> {
+  bool isLoaded = false;
   @override
   void initState() {
     super.initState();
@@ -611,27 +592,44 @@ class _ProductRecallState extends State<ProductRecall> {
       ProductInformationController.getProductRecallByGtin(widget.gtin)
           .then((value) {
         productRecall = value;
+        setState(() {
+          isLoaded = true;
+        });
       });
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return PaginatedDataTable(
-      columns: const [
-        DataColumn(label: Text("Id")),
-        DataColumn(label: Text("Product Recall")),
-        DataColumn(label: Text("Link Type")),
-        DataColumn(label: Text("Language")),
-        DataColumn(label: Text("Target URL")),
-        DataColumn(label: Text("GTIN")),
-        DataColumn(label: Text("Expiry Date")),
-      ],
-      source: ProductRecallSource(),
-      arrowHeadColor: AppColors.green,
-      showCheckboxColumn: false,
-      rowsPerPage: 3,
-    );
+    return !isLoaded
+        ? const Center(
+            child: CircularProgressIndicator(),
+          )
+        : Container(
+            width: context.width(),
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: AppColors.grey,
+                width: 1,
+              ),
+              borderRadius: BorderRadius.circular(5),
+            ),
+            child: Column(
+              children: <Widget>[
+                KeyValueWidget(
+                    value1: "Product Recall",
+                    value2: productRecall[0].productRecall ?? ""),
+                KeyValueWidget(
+                    value1: "GTIN", value2: productRecall[0].gTIN ?? ""),
+                KeyValueWidget(
+                    value1: "Link Type",
+                    value2: productRecall[0].linkType ?? ""),
+                KeyValueWidget(
+                    value1: "Expiry Date",
+                    value2: productRecall[0].expiryDate ?? ""),
+              ],
+            ),
+          );
   }
 }
 
@@ -674,33 +672,47 @@ class Recipe extends StatefulWidget {
 }
 
 class _RecipeState extends State<Recipe> {
+  bool isLoaded = false;
   @override
   void initState() {
     super.initState();
     setState(() {
       ProductInformationController.getRecipeByGtin(widget.gtin).then((value) {
         recipe = value;
+        setState(() {
+          isLoaded = true;
+        });
       });
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return PaginatedDataTable(
-      columns: const [
-        DataColumn(label: Text("Id")),
-        DataColumn(label: Text("Logo")),
-        DataColumn(label: Text("Title")),
-        DataColumn(label: Text("Description")),
-        DataColumn(label: Text("Ingredients")),
-        DataColumn(label: Text("Link Type")),
-        DataColumn(label: Text("GTIN")),
-      ],
-      source: RecipeSource(),
-      arrowHeadColor: AppColors.green,
-      showCheckboxColumn: false,
-      rowsPerPage: 3,
-    );
+    return !isLoaded
+        ? const Center(
+            child: CircularProgressIndicator(),
+          )
+        : Container(
+            width: context.width(),
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: AppColors.grey,
+                width: 1,
+              ),
+              borderRadius: BorderRadius.circular(5),
+            ),
+            child: Column(
+              children: <Widget>[
+                KeyValueWidget(value1: "Title", value2: recipe[0].title ?? ""),
+                KeyValueWidget(
+                    value1: "Description", value2: recipe[0].description ?? ""),
+                KeyValueWidget(
+                    value1: "Ingredients", value2: recipe[0].ingredients ?? ""),
+                KeyValueWidget(
+                    value1: "Link Type", value2: recipe[0].linkType ?? ""),
+              ],
+            ),
+          );
   }
 }
 
@@ -743,6 +755,7 @@ class PackagingComposition extends StatefulWidget {
 }
 
 class _PackagingCompositionState extends State<PackagingComposition> {
+  bool isLoaded = false;
   @override
   void initState() {
     super.initState();
@@ -750,31 +763,49 @@ class _PackagingCompositionState extends State<PackagingComposition> {
       ProductInformationController.getPackagingCompositionByGtin(widget.gtin)
           .then((value) {
         packagingComposition = value;
+        setState(() {
+          isLoaded = true;
+        });
       });
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return PaginatedDataTable(
-      columns: const [
-        DataColumn(label: Text("Id")),
-        DataColumn(label: Text("Logo")),
-        DataColumn(label: Text("Title")),
-        DataColumn(label: Text("Consumer Product Variant")),
-        DataColumn(label: Text("Packaging")),
-        DataColumn(label: Text("Material")),
-        DataColumn(label: Text("Recyclability")),
-        DataColumn(label: Text("Product Owner")),
-        DataColumn(label: Text("Link Type")),
-        DataColumn(label: Text("GTIN")),
-        DataColumn(label: Text("Brand Owner")),
-      ],
-      source: PackagingCompositionSource(),
-      arrowHeadColor: AppColors.green,
-      showCheckboxColumn: false,
-      rowsPerPage: 3,
-    );
+    return !isLoaded
+        ? const Center(
+            child: CircularProgressIndicator(),
+          )
+        : Container(
+            width: context.width(),
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: AppColors.grey,
+                width: 1,
+              ),
+              borderRadius: BorderRadius.circular(5),
+            ),
+            child: Column(
+              children: <Widget>[
+                KeyValueWidget(
+                  value1: "Packaging Composition",
+                  value2: packagingComposition[0].packaging ?? "",
+                ),
+                KeyValueWidget(
+                  value1: "Link Type",
+                  value2: packagingComposition[0].linkType ?? "",
+                ),
+                KeyValueWidget(
+                  value1: "Recyclability",
+                  value2: packagingComposition[0].recyclability ?? "",
+                ),
+                KeyValueWidget(
+                  value1: "Material",
+                  value2: packagingComposition[0].material ?? "",
+                ),
+              ],
+            ),
+          );
   }
 }
 
@@ -821,33 +852,61 @@ class ElectronicLeaflets extends StatefulWidget {
 }
 
 class _ElectronicLeafletsState extends State<ElectronicLeaflets> {
+  bool isLoaded = false;
+
   @override
   void initState() {
     super.initState();
     setState(() {
       ProductInformationController.getLeafletsByGtin(widget.gtin).then((value) {
         leaflets = value;
+        setState(() {
+          isLoaded = true;
+        });
       });
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return PaginatedDataTable(
-      columns: const [
-        DataColumn(label: Text("Id")),
-        DataColumn(label: Text("Product Leaflets Information")),
-        DataColumn(label: Text("Language")),
-        DataColumn(label: Text("Link Type")),
-        DataColumn(label: Text("Target URL")),
-        DataColumn(label: Text("GTIN")),
-        DataColumn(label: Text("PDF Doc")),
-      ],
-      source: LeafletsSource(),
-      arrowHeadColor: AppColors.green,
-      showCheckboxColumn: false,
-      rowsPerPage: 3,
-    );
+    return isLoaded != true
+        ? const Center(
+            child: CircularProgressIndicator(),
+          )
+        : Container(
+            width: context.width(),
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: AppColors.grey,
+                width: 1,
+              ),
+              borderRadius: BorderRadius.circular(5),
+            ),
+            child: Column(
+              children: <Widget>[
+                KeyValueWidget(
+                  value1: "Product Leaflet Information",
+                  value2: leaflets[0].productLeafletInformation ?? "",
+                ),
+                KeyValueWidget(
+                  value1: "Link Type",
+                  value2: leaflets[0].linkType ?? "",
+                ),
+                KeyValueWidget(
+                  value1: "Language",
+                  value2: leaflets[0].lang ?? "",
+                ),
+                KeyValueWidget(
+                  value1: "GTIN",
+                  value2: leaflets[0].gTIN ?? "",
+                ),
+                // KeyValueWidget(
+                //   value1: "Manufacturing Date",
+                //   value2: locationOrigin[0]. ?? "",
+                // ),
+              ],
+            ),
+          );
   }
 }
 
@@ -879,4 +938,53 @@ class LeafletsSource extends DataTableSource {
 
   @override
   int get selectedRowCount => 0;
+}
+
+class KeyValueWidget extends StatelessWidget {
+  final String value1, value2;
+  const KeyValueWidget({
+    super.key,
+    required this.value1,
+    required this.value2,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              value1,
+              style: TextStyle(
+                fontSize: 15,
+                color: AppColors.cyan.withOpacity(0.8),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          // Colon between key and value
+          const Text(
+            ":   ",
+            style: TextStyle(
+              fontSize: 15,
+              color: AppColors.cyan,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Expanded(
+            child: SelectableText(
+              value2,
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+                color: AppColors.darkGold,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

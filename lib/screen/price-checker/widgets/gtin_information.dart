@@ -71,6 +71,7 @@ class _GtinInformationWidgetState extends State<GtinInformationWidget> {
           return Container(
             margin: const EdgeInsets.all(5),
             decoration: BoxDecoration(
+              // dotted border
               border: Border.all(
                 color: AppColors.grey,
                 width: 1,
@@ -142,17 +143,17 @@ class _GtinInformationWidgetState extends State<GtinInformationWidget> {
                   ),
                 ),
                 Expanded(
+                  flex: 1,
                   child: Container(
-                    width: 500,
+                    alignment: Alignment.topCenter,
                     height: 200,
                     decoration: BoxDecoration(
                       // border: Border.all(
                       //   color: AppColors.grey,
                       //   width: 1,
                       // ),
-                      borderRadius: BorderRadius.circular(5),
                       image: DecorationImage(
-                        alignment: Alignment.center,
+                        alignment: Alignment.topCenter,
                         fit: BoxFit.contain,
                         onError: (exception, stackTrace) => const Icon(
                           Ionicons.image_outline,
@@ -186,9 +187,13 @@ class BorderedRowWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: AppColors.grey, width: 1),
-        borderRadius: BorderRadius.circular(5),
+      decoration: const BoxDecoration(
+        border: Border(
+          bottom: BorderSide(
+            color: AppColors.grey,
+            width: 0.5,
+          ),
+        ),
       ),
       child: Padding(
         padding: const EdgeInsets.all(8.0),

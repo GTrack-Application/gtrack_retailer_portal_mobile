@@ -27,4 +27,10 @@ abstract class AppColors {
   static const Color lightGrey = Color.fromRGBO(236, 244, 249, 1);
 
   static const Color orange = Color.fromRGBO(255, 165, 0, 1);
+
+  static const Color gold = Color.fromRGBO(255, 215, 0, 1);
+
+  static const Color darkGold = Color.fromRGBO(255, 215, 0, 1);
+
+  static const Color cyan = Colors.cyan;
 }
