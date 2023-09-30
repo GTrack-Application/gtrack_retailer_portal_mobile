@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:gtrack_retailer_portal/constants/app_urls.dart';
-import 'package:gtrack_retailer_portal/models/product_information/safety_information_model.dart';
+import 'package:gtrack_retailer_portal/models/share/product_information/safety_information_model.dart';
 import 'package:http/http.dart' as http;
 
 class SafetyInfromationController {
