@@ -282,31 +282,42 @@ class _EventsWidgetState extends State<EventsWidget> {
         //           ],
         //         ),
         // );
-        isLoaded == false
-            ? const Center(child: CircularProgressIndicator())
-            : GoogleMap(
-                fortyFiveDegreeImageryEnabled: false,
-                onMapCreated: (GoogleMapController controller) {
-                  mapController = controller;
-                },
-                initialCameraPosition: CameraPosition(
-                  target: LatLng(currentLat, currentLong),
-                  zoom: 12,
-                  tilt: 0,
-                  bearing: 0,
-                ),
-                cameraTargetBounds: CameraTargetBounds.unbounded,
-                mapType: MapType.normal,
-                myLocationButtonEnabled: true,
-                mapToolbarEnabled: true,
-                markers: Set<Marker>.from(yourMarkersList),
-                buildingsEnabled: true,
-                compassEnabled: true,
-                zoomGesturesEnabled: true,
-                scrollGesturesEnabled: true,
-                layoutDirection: TextDirection.ltr,
-                polylines: Set<Polyline>.from(yourPolylinesList),
-              );
+        Container(
+      height: context.height() * 0.5,
+      margin: const EdgeInsets.all(5),
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: AppColors.grey,
+          width: 1,
+        ),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: isLoaded == false
+          ? const Center(child: CircularProgressIndicator())
+          : GoogleMap(
+              fortyFiveDegreeImageryEnabled: false,
+              onMapCreated: (GoogleMapController controller) {
+                mapController = controller;
+              },
+              initialCameraPosition: CameraPosition(
+                target: LatLng(currentLat, currentLong),
+                zoom: 12,
+                tilt: 0,
+                bearing: 0,
+              ),
+              cameraTargetBounds: CameraTargetBounds.unbounded,
+              mapType: MapType.normal,
+              myLocationButtonEnabled: true,
+              mapToolbarEnabled: true,
+              markers: Set<Marker>.from(yourMarkersList),
+              buildingsEnabled: true,
+              compassEnabled: true,
+              zoomGesturesEnabled: true,
+              scrollGesturesEnabled: true,
+              layoutDirection: TextDirection.ltr,
+              polylines: Set<Polyline>.from(yourPolylinesList),
+            ),
+    );
   }
 }
 

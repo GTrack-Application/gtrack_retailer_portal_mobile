@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gtrack_retailer_portal/screen/price-checker/widgets/digital_link_widget.dart';
 import 'package:gtrack_retailer_portal/screen/price-checker/widgets/events_widget.dart';
 import 'package:gtrack_retailer_portal/screen/price-checker/widgets/gtin_information.dart';
 import 'package:nb_utils/nb_utils.dart';
@@ -22,22 +23,23 @@ class _PriceCheckerScreenState extends State<PriceCheckerScreen> {
           children: [
             Row(
               children: [
-                Container(
+                SizedBox(
                   height: context.height(),
                   width: context.width() * 0.6,
                   child: Column(
                     children: [
                       GtinInformationWidget(gtin: gtin, codeType: codeType),
-                      20.height,
                       EventsWidget(gtin: gtin, codeType: codeType),
                     ],
                   ),
                 ),
-                Container(
+                SizedBox(
                   height: context.height(),
                   width: context.width() * 0.4,
                   child: Column(
-                    children: [],
+                    children: [
+                      DigitalLinkScreen(gtin: gtin, codeType: codeType),
+                    ],
                   ),
                 ),
               ],
