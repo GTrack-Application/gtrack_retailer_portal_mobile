@@ -7,6 +7,7 @@ import 'package:gtrack_retailer_portal/blocs/share/product_information/gtin_info
 import 'package:gtrack_retailer_portal/common/colors/app_colors.dart';
 import 'package:gtrack_retailer_portal/models/share/product_information/gtin_information_model.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:nb_utils/nb_utils.dart';
 
 GtinInformationModel? gtinInformationModel;
 
@@ -44,9 +45,29 @@ class _GtinInformationWidgetState extends State<GtinInformationWidget> {
       },
       builder: (context, state) {
         if (state is GlobalLoadingState) {
-          return const Center(child: CircularProgressIndicator());
+          return Container(
+              margin: const EdgeInsets.all(5),
+              height: MediaQuery.of(context).size.height * 0.3,
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: AppColors.grey,
+                  width: 1,
+                ),
+                borderRadius: BorderRadius.circular(5),
+              ),
+              child: const Center(child: CircularProgressIndicator()));
         } else if (state is GlobalErrorState) {
-          return Center(child: Text(state.message));
+          return Container(
+              margin: const EdgeInsets.all(5),
+              height: MediaQuery.of(context).size.height * 0.3,
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: AppColors.grey,
+                  width: 1,
+                ),
+                borderRadius: BorderRadius.circular(5),
+              ),
+              child: Center(child: Text(state.message)));
         } else if (state is GlobalLoadedState) {
           return Container(
             margin: const EdgeInsets.all(5),

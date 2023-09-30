@@ -23,4 +23,8 @@ abstract class AppColors {
 
   //background: rgba(29, 174, 17, 1);
   static const Color green = Color.fromRGBO(29, 174, 17, 1);
+
+  static const Color lightGrey = Color.fromRGBO(236, 244, 249, 1);
+
+  static const Color orange = Color.fromRGBO(255, 165, 0, 1);
 }
