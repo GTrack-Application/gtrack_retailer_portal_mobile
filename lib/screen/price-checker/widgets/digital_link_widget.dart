@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gtrack_retailer_portal/common/colors/app_colors.dart';
-
+import 'package:gtrack_retailer_portal/constants/app_icons.dart';
 import 'package:gtrack_retailer_portal/controller/product_information/product_information_controller.dart';
 import 'package:gtrack_retailer_portal/controller/product_information/safety_informaiton_controller.dart';
 import 'package:gtrack_retailer_portal/models/share/product_information/leaflets_model.dart';
@@ -78,10 +78,18 @@ class _DigitalLinkScreenState extends State<DigitalLinkScreen> {
       child: SingleChildScrollView(
         child: Column(
           children: [
+            ListTile(
+              tileColor: AppColors.green.withOpacity(0.2),
+              leading: Image.asset(AppIcons.gs1Logo),
+              title: const Text("Complete Data"),
+              subtitle: const Text("The number is registered to Company"),
+            ),
+            const SizedBox(height: 5),
             Container(
-              alignment: Alignment.center,
-              height: 50,
+              alignment: Alignment.centerLeft,
+              height: 40,
               width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 10),
               decoration: BoxDecoration(
                 color: AppColors.orange,
                 border: Border.all(
@@ -97,7 +105,6 @@ class _DigitalLinkScreenState extends State<DigitalLinkScreen> {
                   color: AppColors.white,
                   fontWeight: FontWeight.bold,
                 ),
-                textAlign: TextAlign.center,
               ),
             ),
             // Create list of radio list based on above data variable but we will be able to select only one at a time.

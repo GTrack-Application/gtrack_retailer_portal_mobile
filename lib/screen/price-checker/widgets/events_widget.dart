@@ -283,7 +283,7 @@ class _EventsWidgetState extends State<EventsWidget> {
         //         ),
         // );
         Container(
-      height: context.height() * 0.5,
+      height: context.height() * 0.52,
       margin: const EdgeInsets.all(5),
       decoration: BoxDecoration(
         border: Border.all(
