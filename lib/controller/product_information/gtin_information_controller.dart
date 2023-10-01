@@ -6,6 +6,9 @@ import 'package:http/http.dart' as http;
 
 class GtinInformationController {
   static Future<GtinInformationModel> getGtinInformation(String gtin) async {
+    if (gtin == "") {
+      gtin = 'null';
+    }
     final url =
         Uri.parse("${AppUrls.domain}/api/search/member/gtin?gtin=$gtin");
 
@@ -16,7 +19,7 @@ class GtinInformationController {
         final data = jsonDecode(response.body);
         return GtinInformationModel.fromJson(data);
       } else {
-        throw Exception('Failed to load data');
+        return GtinInformationModel();
       }
     } catch (error) {
       rethrow;

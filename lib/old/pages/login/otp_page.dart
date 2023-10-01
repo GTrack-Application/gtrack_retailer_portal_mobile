@@ -5,7 +5,7 @@ import 'package:gtrack_retailer_portal/common/utils/app_dialogs.dart';
 import 'package:gtrack_retailer_portal/common/utils/app_navigator.dart';
 import 'package:gtrack_retailer_portal/common/utils/app_toast.dart';
 import 'package:gtrack_retailer_portal/old/domain/services/apis/login/login_services.dart';
-import 'package:gtrack_retailer_portal/screen/scanner/scanning_screen.dart';
+import 'package:gtrack_retailer_portal/screen/landing_screen.dart';
 import 'package:gtrack_retailer_portal/widgets/buttons/primary_button.dart';
 import 'package:gtrack_retailer_portal/widgets/text_field/icon_text_field.dart';
 
@@ -60,8 +60,7 @@ class _OtpPageState extends State<OtpPage> {
         AppDialogs.closeDialog();
 
         // Get.toNamed(MenuPage.pageName);
-        AppNavigator.replaceTo(
-            context: context, screen: const ScanningScreen());
+        AppNavigator.replaceTo(context: context, screen: const LandingScreen());
       } catch (e) {
         AppDialogs.closeDialog();
         AppToast.danger(e.toString());

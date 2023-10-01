@@ -366,7 +366,12 @@ List<EventsScreenModel> table = [];
 class EventsWidget extends StatefulWidget {
   final String gtin;
   final String codeType;
-  const EventsWidget({Key? key, required this.gtin, required this.codeType})
+  final bool isLoading;
+  const EventsWidget(
+      {Key? key,
+      required this.gtin,
+      required this.codeType,
+      required this.isLoading})
       : super(key: key);
 
   @override
@@ -428,51 +433,61 @@ class _EventsWidgetState extends State<EventsWidget> {
 
   @override
   void initState() {
+    getData();
     super.initState();
+  }
+
+  getData() {
+    currentLat = 24.7136;
+    currentLong = 46.6753;
+
     Future.delayed(
       Duration.zero,
       () {
-        final gtin = (widget.codeType == "1D")
+        final gtin = (widget.gtin.length <= 13)
             ? widget.gtin
-            : widget.gtin.substring(1, 14);
-        EventsScreenController.getEventsData(gtin).then((value) {
-          setState(() {
-            table = value;
-            latitude = value
-                .map((e) => double.parse(e.itemGPSOnGoLat.toString()))
-                .toList();
-            longitude = value
-                .map((e) => double.parse(e.itemGPSOnGoLon.toString()))
-                .toList();
+            : widget.gtin.substring(0, widget.gtin.indexOf("-"));
+        if (gtin == "") {
+          table = [];
+        } else {
+          EventsScreenController.getEventsData(gtin).then((value) {
+            setState(() {
+              table = value;
+              latitude = value
+                  .map((e) => double.parse(e.itemGPSOnGoLat.toString()))
+                  .toList();
+              longitude = value
+                  .map((e) => double.parse(e.itemGPSOnGoLon.toString()))
+                  .toList();
 
-            currentLat = 24.7136;
-            currentLong = 46.6753;
+              // setPolylines(latitude[1], longitude[1], 0);
 
-            // setPolylines(latitude[1], longitude[1], 0);
+              yourMarkersList = table.map((data) {
+                return Marker(
+                  markerId: MarkerId(data.memberID.toString()),
+                  position: LatLng(
+                    double.parse(data.itemGPSOnGoLat.toString()),
+                    double.parse(data.itemGPSOnGoLon.toString()),
+                  ),
+                  infoWindow: InfoWindow(
+                    title: data.memberID,
+                    snippet: "${data.itemGPSOnGoLat}, ${data.itemGPSOnGoLon}",
+                  ),
+                );
+              }).toList();
 
-            yourMarkersList = table.map((data) {
-              return Marker(
-                markerId: MarkerId(data.memberID.toString()),
-                position: LatLng(
-                  double.parse(data.itemGPSOnGoLat.toString()),
-                  double.parse(data.itemGPSOnGoLon.toString()),
-                ),
-                infoWindow: InfoWindow(
-                  title: data.memberID,
-                  snippet: "${data.itemGPSOnGoLat}, ${data.itemGPSOnGoLon}",
-                ),
-              );
-            }).toList();
+              polylineCoordinates = polylineCoordinates.toSet().toList();
 
-            polylineCoordinates = polylineCoordinates.toSet().toList();
-
-            // connect each and every point with each other other but only using routes
-            for (int i = 0; i < table.length - 2; i++) {
-              setPolylines(latitude[i + 1], longitude[i + 1], i);
-            }
-            isLoaded = true;
+              // connect each and every point with each other other but only using routes
+              for (int i = 0; i < table.length - 2; i++) {
+                setPolylines(latitude[i + 1], longitude[i + 1], i);
+              }
+              isLoaded = true;
+            });
+          }).catchError((error) {
+            print(error);
           });
-        });
+        }
       },
     );
   }
@@ -497,9 +512,8 @@ class _EventsWidgetState extends State<EventsWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: context.isPortrait
-          ? context.height() * 0.25
-          : context.height() * 0.48,
+      height:
+          context.isPortrait ? context.height() * 0.2 : context.height() * 0.48,
       margin: const EdgeInsets.all(5),
       child: GoogleMap(
         fortyFiveDegreeImageryEnabled: false,

@@ -84,10 +84,7 @@ class _ScanningScreenState extends State<ScanningScreen> {
                         onTap: () {
                           AppNavigator.goToPage(
                             context: context,
-                            screen: LandingScreen(
-                              code: _oneDBarcodeValue!,
-                              codeType: codeType!,
-                            ),
+                            screen: const LandingScreen(),
                           );
                         },
                         child: Container(

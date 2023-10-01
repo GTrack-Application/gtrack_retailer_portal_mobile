@@ -7,15 +7,18 @@ import 'package:gtrack_retailer_portal/blocs/share/product_information/gtin_info
 import 'package:gtrack_retailer_portal/common/colors/app_colors.dart';
 import 'package:gtrack_retailer_portal/models/share/product_information/gtin_information_model.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:nb_utils/nb_utils.dart';
 
 GtinInformationModel? gtinInformationModel;
 
 class GtinInformationWidget extends StatefulWidget {
   final String gtin;
   final String codeType;
+  final bool isLoading;
   const GtinInformationWidget(
-      {super.key, required this.gtin, required this.codeType});
+      {super.key,
+      required this.gtin,
+      required this.codeType,
+      required this.isLoading});
 
   @override
   State<GtinInformationWidget> createState() => _GtinInformationWidgetState();
@@ -23,14 +26,17 @@ class GtinInformationWidget extends StatefulWidget {
 
 class _GtinInformationWidgetState extends State<GtinInformationWidget> {
   GtinInformationBloc gtinInformationBloc = GtinInformationBloc();
+  bool isLoaded = false;
 
   // Models
 
   @override
   void initState() {
-    final gtin =
-        widget.codeType == "1D" ? widget.gtin : widget.gtin.substring(1, 14);
+    final gtin = widget.gtin.length <= 13
+        ? widget.gtin
+        : widget.gtin.substring(0, widget.gtin.indexOf("-"));
     gtinInformationBloc = gtinInformationBloc..add(GlobalDataEvent(gtin));
+
     super.initState();
   }
 
@@ -41,139 +47,124 @@ class _GtinInformationWidgetState extends State<GtinInformationWidget> {
       listener: (context, state) {
         if (state is GlobalLoadedState) {
           gtinInformationModel = state.data as GtinInformationModel;
+        } else if (state is GlobalErrorState) {
+          gtinInformationModel = null;
         }
       },
       builder: (context, state) {
-        if (state is GlobalLoadingState) {
-          return Container(
-              margin: const EdgeInsets.all(5),
-              height: !context.isPortrait
-                  ? context.height() * 0.3
-                  : context.height() * 0.5,
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: AppColors.black.withOpacity(0.7),
-                  width: 1,
-                ),
-                borderRadius: BorderRadius.circular(5),
-              ),
-              child: const Center(child: CircularProgressIndicator()));
-        } else if (state is GlobalErrorState) {
-          return Container(
-              margin: const EdgeInsets.all(5),
-              height: MediaQuery.of(context).size.height * 0.3,
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: AppColors.black.withOpacity(0.7),
-                  width: 1,
-                ),
-                borderRadius: BorderRadius.circular(5),
-              ),
-              child: Center(child: Text(state.message)));
-        } else if (state is GlobalLoadedState) {
-          return Container(
-            margin: const EdgeInsets.all(5),
-            decoration: BoxDecoration(
-              // dotted border
-              border: Border.all(
-                color: AppColors.black.withOpacity(0.7),
-                width: 1,
-              ),
-              borderRadius: BorderRadius.circular(5),
+        return Container(
+          margin: const EdgeInsets.all(5),
+          decoration: BoxDecoration(
+            // dotted border
+            border: Border.all(
+              color: AppColors.black.withOpacity(0.7),
+              width: 1,
             ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Expanded(
-                  flex: 3,
-                  child: Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        BorderedRowWidget(
-                          value1: "GTIN",
-                          value2:
-                              gtinInformationModel!.gtinArr!.gtin.toString(),
-                        ),
-                        BorderedRowWidget(
-                          value1: "Brand name",
-                          value2: gtinInformationModel!.gtinArr!.brandName
-                              .toString(),
-                        ),
-                        BorderedRowWidget(
-                          value1: "Product Description",
-                          value2: gtinInformationModel!
-                              .gtinArr!.productDescription
-                              .toString(),
-                        ),
-                        BorderedRowWidget(
-                          value1: "Image URL",
-                          value2: gtinInformationModel!.gtinArr!.productImageUrl
-                              .toString(),
-                        ),
-                        BorderedRowWidget(
-                          value1: "Global Product Category",
-                          value2: gtinInformationModel!.gtinArr!.gpcCategoryCode
-                              .toString(),
-                        ),
-                        // const BorderedRowWidget(
-                        //     value1: "Net Content", value2: gtinInformationModel!.gtinArr!.),
-                        BorderedRowWidget(
-                          value1: "Country Of Sale",
-                          value2: gtinInformationModel!
-                              .gtinArr!.countryOfSaleCode
-                              .toString(),
-                        ),
-                        // 30.height,
-                        // PaginatedDataTable(
-                        //   columns: const [
-                        //     DataColumn(label: Text("Allergen Info")),
-                        //     DataColumn(label: Text("Nutrients Info")),
-                        //     DataColumn(label: Text("Batch")),
-                        //     DataColumn(label: Text("Expiry")),
-                        //     DataColumn(label: Text("Serial")),
-                        //     DataColumn(label: Text("Manufecturing Date")),
-                        //     DataColumn(label: Text("Best Before")),
-                        //   ],
-                        //   source: GtinInformationSource(),
-                        //   arrowHeadColor: AppColors.green,
-                        //   showCheckboxColumn: false,
-                        //   rowsPerPage: 5,
-                        // ),
-                      ],
-                    ),
+            borderRadius: BorderRadius.circular(5),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                flex: 3,
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      BorderedRowWidget(
+                        value1: "GTIN",
+                        value2: gtinInformationModel == null
+                            ? ""
+                            : gtinInformationModel!.gtinArr!.gtin ?? '',
+                      ),
+                      BorderedRowWidget(
+                        value1: "Brand name",
+                        value2: gtinInformationModel == null
+                            ? ""
+                            : gtinInformationModel!.gtinArr!.brandName ?? '',
+                      ),
+                      BorderedRowWidget(
+                        value1: "Product Description",
+                        value2: gtinInformationModel == null
+                            ? ""
+                            : gtinInformationModel!
+                                    .gtinArr!.productDescription ??
+                                '',
+                      ),
+                      BorderedRowWidget(
+                        value1: "Image URL",
+                        value2: gtinInformationModel == null
+                            ? ""
+                            : gtinInformationModel!.gtinArr!.productImageUrl ??
+                                '',
+                      ),
+                      BorderedRowWidget(
+                        value1: "Global Product Category",
+                        value2: gtinInformationModel == null
+                            ? ""
+                            : gtinInformationModel!.gtinArr!.gpcCategoryCode ??
+                                '',
+                      ),
+                      // const BorderedRowWidget(
+                      //     value1: "Net Content", value2: gtinInformationModel!.gtinArr!.),
+                      BorderedRowWidget(
+                        value1: "Country Of Sale",
+                        value2: gtinInformationModel == null
+                            ? ""
+                            : gtinInformationModel!
+                                    .gtinArr!.countryOfSaleCode ??
+                                '',
+                      ),
+                      // 30.height,
+                      // PaginatedDataTable(
+                      //   columns: const [
+                      //     DataColumn(label: Text("Allergen Info")),
+                      //     DataColumn(label: Text("Nutrients Info")),
+                      //     DataColumn(label: Text("Batch")),
+                      //     DataColumn(label: Text("Expiry")),
+                      //     DataColumn(label: Text("Serial")),
+                      //     DataColumn(label: Text("Manufecturing Date")),
+                      //     DataColumn(label: Text("Best Before")),
+                      //   ],
+                      //   source: GtinInformationSource(),
+                      //   arrowHeadColor: AppColors.green,
+                      //   showCheckboxColumn: false,
+                      //   rowsPerPage: 5,
+                      // ),
+                    ],
                   ),
                 ),
-                Expanded(
-                  flex: 1,
-                  child: Container(
-                    alignment: Alignment.topCenter,
-                    height: 200,
-                    decoration: BoxDecoration(
-                      // border: Border.all(
-                      //   color: AppColors.grey,
-                      //   width: 1,
-                      // ),
-                      image: DecorationImage(
-                        alignment: Alignment.topCenter,
-                        fit: BoxFit.contain,
-                        onError: (exception, stackTrace) => const Icon(
-                          Ionicons.image_outline,
-                        ),
-                        image: CachedNetworkImageProvider(
-                          gtinInformationModel!.gtinArr!.productImageUrl
-                              .toString(),
-                        ),
+              ),
+              Expanded(
+                flex: 1,
+                child: Container(
+                  alignment: Alignment.topCenter,
+                  height: 200,
+                  decoration: BoxDecoration(
+                    // border: Border.all(
+                    //   color: AppColors.grey,
+                    //   width: 1,
+                    // ),
+                    image: DecorationImage(
+                      alignment: Alignment.topCenter,
+                      fit: BoxFit.contain,
+                      onError: (exception, stackTrace) => const Icon(
+                        Ionicons.image_outline,
+                      ),
+                      image: CachedNetworkImageProvider(
+                        gtinInformationModel == null
+                            ? ""
+                            : gtinInformationModel!.gtinArr!.productImageUrl
+                                .toString(),
                       ),
                     ),
                   ),
                 ),
-              ],
-            ),
-          );
-        }
-        return const Center(child: Text("Something went wrong"));
+              ),
+            ],
+          ),
+        );
       },
     );
   }

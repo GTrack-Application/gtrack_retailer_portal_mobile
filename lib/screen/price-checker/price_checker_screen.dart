@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gtrack_retailer_portal/blocs/global/global_states_events.dart';
+import 'package:gtrack_retailer_portal/blocs/price_checker/price_checker_bloc.dart';
 import 'package:gtrack_retailer_portal/common/colors/app_colors.dart';
+import 'package:gtrack_retailer_portal/global/variables/global_variables.dart';
 import 'package:gtrack_retailer_portal/screen/price-checker/widgets/digital_link_widget.dart';
 import 'package:gtrack_retailer_portal/screen/price-checker/widgets/events_widget.dart';
 import 'package:gtrack_retailer_portal/screen/price-checker/widgets/gtin_information.dart';
+import 'package:gtrack_retailer_portal/widgets/loading/loading_widget.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 class PriceCheckerScreen extends StatefulWidget {
-  final String code, codeType;
-  const PriceCheckerScreen(
-      {Key? key, required this.code, required this.codeType})
-      : super(key: key);
+  const PriceCheckerScreen({Key? key}) : super(key: key);
 
   @override
   State<PriceCheckerScreen> createState() => _PriceCheckerScreenState();
@@ -20,16 +22,23 @@ class _PriceCheckerScreenState extends State<PriceCheckerScreen> {
   String? codeType;
   String? code;
 
-  @override
-  void initState() {
-    codeType = widget.codeType;
-    code = widget.code;
-    if (codeType == "1D") {
-      gtin = widget.code;
-    } else {
-      gtin = widget.code.substring(1, 14);
-    }
-    super.initState();
+  bool isLoading = false;
+  PriceCheckerBloc priceCheckerBloc = PriceCheckerBloc();
+
+  getDataByGtin(String value) {
+    // AppDialogs.loadingDialog(context);
+    priceCheckerBloc = priceCheckerBloc..add(GlobalInitEvent());
+    // setState(() {
+    //   Future.delayed(const Duration(seconds: 2), () {
+    //     isLoading = true;
+    //   }).then((value) {
+    //     setState(() {
+    //       isLoading = true;
+    //     });
+    //   });
+    //   // AppDialogs.closeDialog();
+    // });
+    // setState(() {});
   }
 
   @override
@@ -38,52 +47,70 @@ class _PriceCheckerScreenState extends State<PriceCheckerScreen> {
       appBar: AppBar(
         title: const Text('Price Checker'),
       ),
-      body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                SizedBox(
-                  height: context.height(),
-                  width: context.width() * 0.6,
-                  child: Column(
+      body: BlocConsumer<PriceCheckerBloc, GlobalState>(
+        bloc: priceCheckerBloc,
+        listener: (context, state) {},
+        builder: (context, state) {
+          if (state is GlobalLoadingState) {
+            return const Center(child: LoadingWidget());
+          } else {
+            return SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Column(
+                children: [
+                  Row(
                     children: [
-                      Container(
-                        width: context.width(),
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        margin: const EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                          color: AppColors.darkGold.withOpacity(0.5),
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: Text(
-                          gtin ?? "",
-                          style: const TextStyle(fontSize: 20),
+                      SizedBox(
+                        height: context.height(),
+                        width: context.width() * 0.6,
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(5.0),
+                              child: TextField(
+                                controller: gtinController,
+                                onSubmitted: getDataByGtin,
+                                textInputAction: TextInputAction.search,
+                                decoration: InputDecoration(
+                                    border: const OutlineInputBorder(),
+                                    labelText: 'Enter GTIN',
+                                    fillColor:
+                                        AppColors.darkGold.withOpacity(0.8)),
+                              ),
+                            ),
+                            GtinInformationWidget(
+                              gtin: gtinController.text.trim(),
+                              codeType: codeType ?? '',
+                              isLoading: true,
+                            ),
+                            EventsWidget(
+                              gtin: gtinController.text.trim(),
+                              codeType: codeType ?? '',
+                              isLoading: isLoading,
+                            ),
+                          ],
                         ),
                       ),
-                      GtinInformationWidget(
-                          gtin: gtin ?? '', codeType: codeType ?? ''),
-                      EventsWidget(gtin: gtin ?? '', codeType: codeType ?? ''),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: context.height(),
-                  width: context.width() * 0.4,
-                  child: Column(
-                    children: [
-                      DigitalLinkScreen(
-                        gtin: gtin ?? '',
-                        codeType: codeType ?? '',
+                      SizedBox(
+                        height: context.height(),
+                        width: context.width() * 0.4,
+                        child: Column(
+                          children: [
+                            DigitalLinkScreen(
+                              gtin: gtinController.text.trim(),
+                              codeType: codeType ?? '',
+                              isLoading: isLoading,
+                            ),
+                          ],
+                        ),
                       ),
                     ],
-                  ),
-                ),
-              ],
-            )
-          ],
-        ),
+                  )
+                ],
+              ),
+            );
+          }
+        },
       ),
     );
   }

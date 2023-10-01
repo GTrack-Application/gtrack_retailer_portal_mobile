@@ -26,10 +26,12 @@ List<LeafletsModel> leaflets = [];
 class DigitalLinkScreen extends StatefulWidget {
   final String gtin;
   final String codeType;
+  final bool isLoading;
   const DigitalLinkScreen({
     Key? key,
     required this.gtin,
     required this.codeType,
+    required this.isLoading,
   }) : super(key: key);
 
   @override
@@ -48,6 +50,8 @@ class _DigitalLinkScreenState extends State<DigitalLinkScreen> {
     "Electronic Leaflets",
   ];
 
+  bool isLoaded = false;
+
   final List<Widget> screens = [];
   String? gtin;
 
@@ -55,25 +59,38 @@ class _DigitalLinkScreenState extends State<DigitalLinkScreen> {
   int selectedIndex = 0;
   @override
   void initState() {
-    if (widget.codeType == "1D") {
+    super.initState();
+    isLoaded = widget.isLoading;
+    getData();
+  }
+
+  getData() {
+    if (widget.gtin.length <= 13) {
       gtin = widget.gtin;
     } else {
-      gtin = widget.gtin.substring(1, 14);
+      // grab the string before first dash ("-")
+      gtin = widget.gtin.substring(0, widget.gtin.indexOf("-"));
     }
-    screens.insert(0, SafetyInformation(gtin: gtin ?? ""));
-    screens.insert(1, ProductRecall(gtin: gtin ?? ""));
-    screens.insert(2, PromotionalOffers(gtin: gtin ?? ""));
-    screens.insert(3, Recipe(gtin: gtin ?? ""));
-    screens.insert(4, ProductContents(gtin: gtin ?? ""));
-    screens.insert(5, PackagingComposition(gtin: gtin ?? ""));
-    screens.insert(6, ProductLocationOfOrigin(gtin: gtin ?? ""));
-    screens.insert(7, ElectronicLeaflets(gtin: gtin ?? ""));
-
-    super.initState();
+    screens.insert(0, SafetyInformation(gtin: gtin ?? 'null'));
+    screens.insert(1, ProductRecall(gtin: gtin ?? 'null'));
+    screens.insert(2, PromotionalOffers(gtin: gtin ?? 'null'));
+    screens.insert(3, Recipe(gtin: gtin ?? 'null'));
+    screens.insert(4, ProductContents(gtin: gtin ?? 'null'));
+    screens.insert(5, PackagingComposition(gtin: gtin ?? 'null'));
+    screens.insert(6, ProductLocationOfOrigin(gtin: gtin ?? 'null'));
+    screens.insert(7, ElectronicLeaflets(gtin: gtin ?? 'null'));
   }
 
   @override
   Widget build(BuildContext context) {
+    widget.isLoading
+        ? () {
+            isLoaded = false;
+            getData();
+          }
+        : () {
+            print("Empty");
+          };
     return Container(
       margin: const EdgeInsets.all(5),
       child: SingleChildScrollView(
@@ -205,6 +222,9 @@ class _SafetyInformationState extends State<SafetyInformation> {
         setState(() {
           isLoaded = true;
         });
+      }).catchError((e) {
+        safetyInformation = [];
+        print(e);
       });
     });
     super.initState();
@@ -212,37 +232,40 @@ class _SafetyInformationState extends State<SafetyInformation> {
 
   @override
   Widget build(BuildContext context) {
-    return !isLoaded
-        ? const Center(
-            child: CircularProgressIndicator(),
-          )
-        : Container(
-            width: context.width(),
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: AppColors.grey,
-                width: 1,
-              ),
-              borderRadius: BorderRadius.circular(5),
-            ),
-            child: Column(
-              children: <Widget>[
-                KeyValueWidget(
-                    value1: "Safety Information",
-                    value2:
-                        safetyInformation[0].safetyDetailedInformation ?? ""),
-                KeyValueWidget(
-                    value1: "Link Type",
-                    value2: safetyInformation[0].linkType ?? ""),
-                KeyValueWidget(
-                    value1: "Target Url",
-                    value2: safetyInformation[0].targetURL ?? ""),
-                KeyValueWidget(
-                    value1: "Company Name",
-                    value2: safetyInformation[0].companyName ?? ""),
-              ],
-            ),
-          );
+    return Container(
+      width: context.width(),
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: AppColors.grey,
+          width: 1,
+        ),
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: Column(
+        children: <Widget>[
+          KeyValueWidget(
+              value1: "Safety Information",
+              value2: safetyInformation.isEmpty
+                  ? ""
+                  : safetyInformation[0].safetyDetailedInformation ?? ""),
+          KeyValueWidget(
+              value1: "Link Type",
+              value2: safetyInformation.isEmpty
+                  ? ""
+                  : safetyInformation[0].linkType ?? ""),
+          KeyValueWidget(
+              value1: "Target Url",
+              value2: safetyInformation.isEmpty
+                  ? ""
+                  : safetyInformation[0].targetURL ?? ""),
+          KeyValueWidget(
+              value1: "Company Name",
+              value2: safetyInformation.isEmpty
+                  ? ""
+                  : safetyInformation[0].companyName ?? ""),
+        ],
+      ),
+    );
   }
 }
 
@@ -304,39 +327,45 @@ class _PromotionalOffersState extends State<PromotionalOffers> {
 
   @override
   Widget build(BuildContext context) {
-    return !isLoaded
-        ? const Center(
-            child: CircularProgressIndicator(),
-          )
-        : Container(
-            width: context.width(),
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: AppColors.grey,
-                width: 1,
-              ),
-              borderRadius: BorderRadius.circular(5),
-            ),
-            child: Column(
-              children: <Widget>[
-                KeyValueWidget(
-                    value1: "Promotional Offers",
-                    value2: promotionalOffer[0].promotionalOffers ?? ""),
-                KeyValueWidget(
-                    value1: "Link Type",
-                    value2: promotionalOffer[0].linkType ?? ""),
-                KeyValueWidget(
-                    value1: "Target URL",
-                    value2: promotionalOffer[0].targetURL ?? ""),
-                KeyValueWidget(
-                  value1: "Price",
-                  value2: promotionalOffer[0].price.toString() == "null"
-                      ? "0"
-                      : promotionalOffer[0].price.toString(),
-                ),
-              ],
-            ),
-          );
+    return Container(
+      width: context.width(),
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: AppColors.grey,
+          width: 1,
+        ),
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: Column(
+        children: <Widget>[
+          KeyValueWidget(
+              value1: "Promotional Offers",
+              value2: promotionalOffer.isEmpty
+                  ? ''
+                  : promotionalOffer[0].promotionalOffers ?? ""),
+          KeyValueWidget(
+              value1: "Link Type",
+              value2: promotionalOffer.isEmpty
+                  ? ''
+                  : promotionalOffer[0].linkType ?? ""),
+          KeyValueWidget(
+              value1: "Target URL",
+              value2: promotionalOffer.isEmpty
+                  ? ''
+                  : promotionalOffer[0].targetURL ?? ""),
+          KeyValueWidget(
+            value1: "Price",
+            value2: promotionalOffer.isEmpty
+                ? ''
+                : promotionalOffer[0].price.toString() == "null"
+                    ? "0"
+                    : promotionalOffer.isEmpty
+                        ? ''
+                        : promotionalOffer[0].price.toString(),
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -392,50 +421,58 @@ class _ProductContentsState extends State<ProductContents> {
         setState(() {
           isLoaded = true;
         });
+      }).onError((error, stackTrace) {
+        isLoaded = false;
       });
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return !isLoaded
-        ? const Center(
-            child: CircularProgressIndicator(),
-          )
-        : Container(
-            width: context.width(),
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: AppColors.grey,
-                width: 1,
-              ),
-              borderRadius: BorderRadius.circular(5),
-            ),
-            child: Column(
-              children: <Widget>[
-                KeyValueWidget(
-                  value1: "Product Allergen Informaion",
-                  value2: productContents[0].productAllergenInformation ?? "",
-                ),
-                KeyValueWidget(
-                  value1: "Allergen Info",
-                  value2: productContents[0].allergenInfo ?? "",
-                ),
-                KeyValueWidget(
-                  value1: "Ingredients",
-                  value2: productContents[0].ingredients ?? "",
-                ),
-                KeyValueWidget(
-                  value1: "Manufacturing Date",
-                  value2: productContents[0].manufacturingDate ?? "",
-                ),
-                KeyValueWidget(
-                  value1: "Best before Date",
-                  value2: productContents[0].bestBeforeDate ?? "",
-                ),
-              ],
-            ),
-          );
+    return Container(
+      width: context.width(),
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: AppColors.grey,
+          width: 1,
+        ),
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: Column(
+        children: <Widget>[
+          KeyValueWidget(
+            value1: "Product Allergen Informaion",
+            value2: productContents.isEmpty
+                ? ''
+                : productContents[0].productAllergenInformation ?? "",
+          ),
+          KeyValueWidget(
+            value1: "Allergen Info",
+            value2: productContents.isEmpty
+                ? ''
+                : productContents[0].allergenInfo ?? "",
+          ),
+          KeyValueWidget(
+            value1: "Ingredients",
+            value2: productContents.isEmpty
+                ? ''
+                : productContents[0].ingredients ?? "",
+          ),
+          KeyValueWidget(
+            value1: "Manufacturing Date",
+            value2: productContents.isEmpty
+                ? ''
+                : productContents[0].manufacturingDate ?? "",
+          ),
+          KeyValueWidget(
+            value1: "Best before Date",
+            value2: productContents.isEmpty
+                ? ''
+                : productContents[0].bestBeforeDate ?? "",
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -508,40 +545,39 @@ class _ProductLocationOfOriginState extends State<ProductLocationOfOrigin> {
 
   @override
   Widget build(BuildContext context) {
-    return !isLoaded
-        ? const Center(
-            child: CircularProgressIndicator(),
-          )
-        : Container(
-            width: context.width(),
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: AppColors.grey,
-                width: 1,
-              ),
-              borderRadius: BorderRadius.circular(5),
-            ),
-            child: Column(
-              children: <Widget>[
-                KeyValueWidget(
-                  value1: "Product Location Origin",
-                  value2: locationOrigin[0].productLocationOrigin ?? "",
-                ),
-                KeyValueWidget(
-                  value1: "Link Type",
-                  value2: locationOrigin[0].linkType ?? "",
-                ),
-                KeyValueWidget(
-                  value1: "GTIN",
-                  value2: locationOrigin[0].gTIN ?? "",
-                ),
-                // KeyValueWidget(
-                //   value1: "Manufacturing Date",
-                //   value2: locationOrigin[0]. ?? "",
-                // ),
-              ],
-            ),
-          );
+    return Container(
+      width: context.width(),
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: AppColors.grey,
+          width: 1,
+        ),
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: Column(
+        children: <Widget>[
+          KeyValueWidget(
+            value1: "Product Location Origin",
+            value2: locationOrigin.isEmpty
+                ? ''
+                : locationOrigin[0].productLocationOrigin ?? "",
+          ),
+          KeyValueWidget(
+            value1: "Link Type",
+            value2:
+                locationOrigin.isEmpty ? '' : locationOrigin[0].linkType ?? "",
+          ),
+          KeyValueWidget(
+            value1: "GTIN",
+            value2: locationOrigin.isEmpty ? '' : locationOrigin[0].gTIN ?? "",
+          ),
+          // KeyValueWidget(
+          //   value1: "Manufacturing Date",
+          //   value2: locationOrigin.isEmpty ? '' : locationOrigin[0]. ?? "",
+          // ),
+        ],
+      ),
+    );
   }
 }
 
@@ -584,7 +620,6 @@ class ProductRecall extends StatefulWidget {
 }
 
 class _ProductRecallState extends State<ProductRecall> {
-  bool isLoaded = false;
   @override
   void initState() {
     super.initState();
@@ -592,44 +627,43 @@ class _ProductRecallState extends State<ProductRecall> {
       ProductInformationController.getProductRecallByGtin(widget.gtin)
           .then((value) {
         productRecall = value;
-        setState(() {
-          isLoaded = true;
-        });
-      });
+      }).catchError((error) {});
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return !isLoaded
-        ? const Center(
-            child: CircularProgressIndicator(),
-          )
-        : Container(
-            width: context.width(),
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: AppColors.grey,
-                width: 1,
-              ),
-              borderRadius: BorderRadius.circular(5),
-            ),
-            child: Column(
-              children: <Widget>[
-                KeyValueWidget(
-                    value1: "Product Recall",
-                    value2: productRecall[0].productRecall ?? ""),
-                KeyValueWidget(
-                    value1: "GTIN", value2: productRecall[0].gTIN ?? ""),
-                KeyValueWidget(
-                    value1: "Link Type",
-                    value2: productRecall[0].linkType ?? ""),
-                KeyValueWidget(
-                    value1: "Expiry Date",
-                    value2: productRecall[0].expiryDate ?? ""),
-              ],
-            ),
-          );
+    return Container(
+      width: context.width(),
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: AppColors.grey,
+          width: 1,
+        ),
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: Column(
+        children: <Widget>[
+          KeyValueWidget(
+              value1: "Product Recall",
+              value2: productRecall.isEmpty
+                  ? ''
+                  : productRecall[0].productRecall ?? ""),
+          KeyValueWidget(
+              value1: "GTIN",
+              value2: productRecall.isEmpty ? '' : productRecall[0].gTIN ?? ""),
+          KeyValueWidget(
+              value1: "Link Type",
+              value2:
+                  productRecall.isEmpty ? '' : productRecall[0].linkType ?? ""),
+          KeyValueWidget(
+              value1: "Expiry Date",
+              value2: productRecall.isEmpty
+                  ? ''
+                  : productRecall[0].expiryDate ?? ""),
+        ],
+      ),
+    );
   }
 }
 
@@ -688,31 +722,32 @@ class _RecipeState extends State<Recipe> {
 
   @override
   Widget build(BuildContext context) {
-    return !isLoaded
-        ? const Center(
-            child: CircularProgressIndicator(),
-          )
-        : Container(
-            width: context.width(),
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: AppColors.grey,
-                width: 1,
-              ),
-              borderRadius: BorderRadius.circular(5),
-            ),
-            child: Column(
-              children: <Widget>[
-                KeyValueWidget(value1: "Title", value2: recipe[0].title ?? ""),
-                KeyValueWidget(
-                    value1: "Description", value2: recipe[0].description ?? ""),
-                KeyValueWidget(
-                    value1: "Ingredients", value2: recipe[0].ingredients ?? ""),
-                KeyValueWidget(
-                    value1: "Link Type", value2: recipe[0].linkType ?? ""),
-              ],
-            ),
-          );
+    return Container(
+      width: context.width(),
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: AppColors.grey,
+          width: 1,
+        ),
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: Column(
+        children: <Widget>[
+          KeyValueWidget(
+              value1: "Title",
+              value2: recipe.isEmpty ? '' : recipe[0].title ?? ""),
+          KeyValueWidget(
+              value1: "Description",
+              value2: recipe.isEmpty ? '' : recipe[0].description ?? ""),
+          KeyValueWidget(
+              value1: "Ingredients",
+              value2: recipe.isEmpty ? '' : recipe[0].ingredients ?? ""),
+          KeyValueWidget(
+              value1: "Link Type",
+              value2: recipe.isEmpty ? '' : recipe[0].linkType ?? ""),
+        ],
+      ),
+    );
   }
 }
 
@@ -772,40 +807,44 @@ class _PackagingCompositionState extends State<PackagingComposition> {
 
   @override
   Widget build(BuildContext context) {
-    return !isLoaded
-        ? const Center(
-            child: CircularProgressIndicator(),
-          )
-        : Container(
-            width: context.width(),
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: AppColors.grey,
-                width: 1,
-              ),
-              borderRadius: BorderRadius.circular(5),
-            ),
-            child: Column(
-              children: <Widget>[
-                KeyValueWidget(
-                  value1: "Packaging Composition",
-                  value2: packagingComposition[0].packaging ?? "",
-                ),
-                KeyValueWidget(
-                  value1: "Link Type",
-                  value2: packagingComposition[0].linkType ?? "",
-                ),
-                KeyValueWidget(
-                  value1: "Recyclability",
-                  value2: packagingComposition[0].recyclability ?? "",
-                ),
-                KeyValueWidget(
-                  value1: "Material",
-                  value2: packagingComposition[0].material ?? "",
-                ),
-              ],
-            ),
-          );
+    return Container(
+      width: context.width(),
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: AppColors.grey,
+          width: 1,
+        ),
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: Column(
+        children: <Widget>[
+          KeyValueWidget(
+            value1: "Packaging Composition",
+            value2: packagingComposition.isEmpty
+                ? ''
+                : packagingComposition[0].packaging ?? "",
+          ),
+          KeyValueWidget(
+            value1: "Link Type",
+            value2: packagingComposition.isEmpty
+                ? ''
+                : packagingComposition[0].linkType ?? "",
+          ),
+          KeyValueWidget(
+            value1: "Recyclability",
+            value2: packagingComposition.isEmpty
+                ? ''
+                : packagingComposition[0].recyclability ?? "",
+          ),
+          KeyValueWidget(
+            value1: "Material",
+            value2: packagingComposition.isEmpty
+                ? ''
+                : packagingComposition[0].material ?? "",
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -869,44 +908,42 @@ class _ElectronicLeafletsState extends State<ElectronicLeaflets> {
 
   @override
   Widget build(BuildContext context) {
-    return isLoaded != true
-        ? const Center(
-            child: CircularProgressIndicator(),
-          )
-        : Container(
-            width: context.width(),
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: AppColors.grey,
-                width: 1,
-              ),
-              borderRadius: BorderRadius.circular(5),
-            ),
-            child: Column(
-              children: <Widget>[
-                KeyValueWidget(
-                  value1: "Product Leaflet Information",
-                  value2: leaflets[0].productLeafletInformation ?? "",
-                ),
-                KeyValueWidget(
-                  value1: "Link Type",
-                  value2: leaflets[0].linkType ?? "",
-                ),
-                KeyValueWidget(
-                  value1: "Language",
-                  value2: leaflets[0].lang ?? "",
-                ),
-                KeyValueWidget(
-                  value1: "GTIN",
-                  value2: leaflets[0].gTIN ?? "",
-                ),
-                // KeyValueWidget(
-                //   value1: "Manufacturing Date",
-                //   value2: locationOrigin[0]. ?? "",
-                // ),
-              ],
-            ),
-          );
+    return Container(
+      width: context.width(),
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: AppColors.grey,
+          width: 1,
+        ),
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: Column(
+        children: <Widget>[
+          KeyValueWidget(
+            value1: "Product Leaflet Information",
+            value2: leaflets.isEmpty
+                ? ''
+                : leaflets[0].productLeafletInformation ?? "",
+          ),
+          KeyValueWidget(
+            value1: "Link Type",
+            value2: leaflets.isEmpty ? '' : leaflets[0].linkType ?? "",
+          ),
+          KeyValueWidget(
+            value1: "Language",
+            value2: leaflets.isEmpty ? '' : leaflets[0].lang ?? "",
+          ),
+          KeyValueWidget(
+            value1: "GTIN",
+            value2: leaflets.isEmpty ? '' : leaflets[0].gTIN ?? "",
+          ),
+          // KeyValueWidget(
+          //   value1: "Manufacturing Date",
+          //   value2: locationOrigin[0]. ?? "",
+          // ),
+        ],
+      ),
+    );
   }
 }
 
