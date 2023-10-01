@@ -55,8 +55,10 @@ dependencies:
   google_maps_flutter: ^2.4.0 
   geolocator: ^9.0.2
   flutter_barcode_scanner: ^2.0.0
-  flutter_polyline_points:
   native_device_orientation: ^1.1.4
+  provider: ^6.0.5
+  get: ^4.6.5
+  flutter_polyline_points:
 
 dev_dependencies:
   flutter_test:

@@ -7,6 +7,7 @@ import 'package:gtrack_retailer_portal/blocs/share/product_information/gtin_info
 import 'package:gtrack_retailer_portal/common/colors/app_colors.dart';
 import 'package:gtrack_retailer_portal/models/share/product_information/gtin_information_model.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:nb_utils/nb_utils.dart';
 
 GtinInformationModel? gtinInformationModel;
 
@@ -46,10 +47,12 @@ class _GtinInformationWidgetState extends State<GtinInformationWidget> {
         if (state is GlobalLoadingState) {
           return Container(
               margin: const EdgeInsets.all(5),
-              height: MediaQuery.of(context).size.height * 0.3,
+              height: !context.isPortrait
+                  ? context.height() * 0.3
+                  : context.height() * 0.5,
               decoration: BoxDecoration(
                 border: Border.all(
-                  color: AppColors.grey,
+                  color: AppColors.black.withOpacity(0.7),
                   width: 1,
                 ),
                 borderRadius: BorderRadius.circular(5),
@@ -61,7 +64,7 @@ class _GtinInformationWidgetState extends State<GtinInformationWidget> {
               height: MediaQuery.of(context).size.height * 0.3,
               decoration: BoxDecoration(
                 border: Border.all(
-                  color: AppColors.grey,
+                  color: AppColors.black.withOpacity(0.7),
                   width: 1,
                 ),
                 borderRadius: BorderRadius.circular(5),
@@ -73,7 +76,7 @@ class _GtinInformationWidgetState extends State<GtinInformationWidget> {
             decoration: BoxDecoration(
               // dotted border
               border: Border.all(
-                color: AppColors.grey,
+                color: AppColors.black.withOpacity(0.7),
                 width: 1,
               ),
               borderRadius: BorderRadius.circular(5),
@@ -190,7 +193,7 @@ class BorderedRowWidget extends StatelessWidget {
       decoration: const BoxDecoration(
         border: Border(
           bottom: BorderSide(
-            color: AppColors.grey,
+            color: AppColors.black,
             width: 0.5,
           ),
         ),

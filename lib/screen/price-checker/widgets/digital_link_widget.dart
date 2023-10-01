@@ -110,11 +110,11 @@ class _DigitalLinkScreenState extends State<DigitalLinkScreen> {
             ),
             // Create list of radio list based on above data variable but we will be able to select only one at a time.
             GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 crossAxisSpacing: 5,
                 mainAxisSpacing: 5,
-                childAspectRatio: 6.0,
+                childAspectRatio: context.isPortrait ? 9.0 : 6.0,
               ),
               shrinkWrap: true,
               itemCount: data.length,

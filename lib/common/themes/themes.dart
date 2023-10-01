@@ -63,7 +63,8 @@ class Themes {
         titleTextStyle: const TextTheme(
           titleLarge: TextStyle(
             color: Colors.white,
-            fontSize: 20,
+            fontSize: 30,
+            fontWeight: FontWeight.w700,
           ),
         ).titleLarge,
       ),

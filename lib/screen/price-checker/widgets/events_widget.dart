@@ -497,7 +497,10 @@ class _EventsWidgetState extends State<EventsWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: context.height() * 0.5,
+      height: context.isPortrait
+          ? context.height() * 0.25
+          : context.height() * 0.48,
+      margin: const EdgeInsets.all(5),
       child: GoogleMap(
         fortyFiveDegreeImageryEnabled: false,
         onMapCreated: (GoogleMapController controller) {
