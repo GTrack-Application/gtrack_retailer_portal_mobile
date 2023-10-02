@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gtrack_retailer_portal/common/colors/app_colors.dart';
 import 'package:gtrack_retailer_portal/constants/app_icons.dart';
+import 'package:gtrack_retailer_portal/constants/app_preferences.dart';
 import 'package:gtrack_retailer_portal/controller/product_information/product_information_controller.dart';
 import 'package:gtrack_retailer_portal/controller/product_information/safety_informaiton_controller.dart';
 import 'package:gtrack_retailer_portal/models/share/product_information/leaflets_model.dart';
@@ -49,18 +50,21 @@ class _DigitalLinkScreenState extends State<DigitalLinkScreen> {
     "Product Location Of Origin",
     "Electronic Leaflets",
   ];
-
-  bool isLoaded = false;
-
   final List<Widget> screens = [];
+
   String? gtin;
+  String? companyName;
 
   // Default Radio Button Selected Item When App Starts.
   int selectedIndex = 0;
   @override
   void initState() {
+    AppPreferences.getCompany().then((value) {
+      setState(() {
+        companyName = value;
+      });
+    });
     super.initState();
-    isLoaded = widget.isLoading;
     getData();
   }
 
@@ -83,14 +87,6 @@ class _DigitalLinkScreenState extends State<DigitalLinkScreen> {
 
   @override
   Widget build(BuildContext context) {
-    widget.isLoading
-        ? () {
-            isLoaded = false;
-            getData();
-          }
-        : () {
-            print("Empty");
-          };
     return Container(
       margin: const EdgeInsets.all(5),
       child: SingleChildScrollView(
@@ -100,7 +96,8 @@ class _DigitalLinkScreenState extends State<DigitalLinkScreen> {
               tileColor: AppColors.green.withOpacity(0.2),
               leading: Image.asset(AppIcons.gs1Logo),
               title: const Text("Complete Data"),
-              subtitle: const Text("The number is registered to Company"),
+              subtitle:
+                  Text("The number is registered to Company : $companyName"),
             ),
             const SizedBox(height: 5),
             Container(

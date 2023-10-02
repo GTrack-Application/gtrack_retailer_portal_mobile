@@ -53,6 +53,8 @@ class LoginServices {
         AppPreferences.setMemberCategoryDescription(
                 member.memberCategory!.memberCategoryDescription.toString())
             .then((_) {});
+        AppPreferences.setCompany(member.user!.companyNameEng.toString())
+            .then((value) {});
       } else {
         throw Exception('Invalid OTP, Please try again');
       }

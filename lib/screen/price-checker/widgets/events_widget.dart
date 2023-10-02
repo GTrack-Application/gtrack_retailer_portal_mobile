@@ -484,9 +484,7 @@ class _EventsWidgetState extends State<EventsWidget> {
               }
               isLoaded = true;
             });
-          }).catchError((error) {
-            print(error);
-          });
+          }).catchError((error) {});
         }
       },
     );

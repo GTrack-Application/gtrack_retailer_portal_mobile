@@ -6,6 +6,8 @@ import 'package:get/get.dart';
 import 'package:gtrack_retailer_portal/common/utils/app_dialogs.dart';
 import 'package:gtrack_retailer_portal/common/utils/app_navigator.dart';
 import 'package:gtrack_retailer_portal/common/utils/custom_dialog.dart';
+import 'package:gtrack_retailer_portal/constants/app_icons.dart';
+import 'package:gtrack_retailer_portal/constants/app_images.dart';
 import 'package:gtrack_retailer_portal/constants/app_text_styles.dart';
 import 'package:gtrack_retailer_portal/models/activities/email_activities_model.dart';
 import 'package:gtrack_retailer_portal/old/domain/services/apis/login/login_services.dart';
@@ -137,17 +139,17 @@ class _ActivitiesAndPasswordPageState extends State<ActivitiesAndPasswordPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Center(
-              //   child: Container(
-              //     margin: const EdgeInsets.only(top: 50),
-              //     child: Image.asset(
-              //       AppImages.logo,
-              //       width: 189,
-              //       height: 189,
-              //     ),
-              //   ),
-              // ),
-              // const SizedBox(height: 20),
+              Center(
+                child: Container(
+                  margin: const EdgeInsets.only(top: 50),
+                  child: Image.asset(
+                    AppImages.logo,
+                    width: 189,
+                    height: 189,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
               Padding(
                 padding: const EdgeInsets.only(
                   left: 30,
@@ -166,8 +168,8 @@ class _ActivitiesAndPasswordPageState extends State<ActivitiesAndPasswordPage> {
                     ),
                     Row(
                       children: [
-                        // Image.asset(AppIcons.work, width: 42, height: 42),
-                        // const SizedBox(width: 10),
+                        Image.asset(AppIcons.work, width: 42, height: 42),
+                        const SizedBox(width: 10),
                         Flexible(
                           child: DropDownWidget(
                             items: activities,
@@ -197,11 +199,11 @@ class _ActivitiesAndPasswordPageState extends State<ActivitiesAndPasswordPage> {
                     ),
                     IconTextField(
                       controller: passwordController,
-                      // leadingIcon: Image.asset(
-                      //   AppIcons.passwordIcon,
-                      //   width: 42,
-                      //   height: 42,
-                      // ),
+                      leadingIcon: Image.asset(
+                        AppIcons.passwordIcon,
+                        width: 42,
+                        height: 42,
+                      ),
                       keyboardType: TextInputType.visiblePassword,
                       obscureText: obscureText,
                       validator: (p0) {

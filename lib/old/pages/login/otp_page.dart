@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:gtrack_retailer_portal/common/utils/app_dialogs.dart';
 import 'package:gtrack_retailer_portal/common/utils/app_navigator.dart';
 import 'package:gtrack_retailer_portal/common/utils/app_toast.dart';
+import 'package:gtrack_retailer_portal/constants/app_icons.dart';
+import 'package:gtrack_retailer_portal/constants/app_images.dart';
 import 'package:gtrack_retailer_portal/old/domain/services/apis/login/login_services.dart';
 import 'package:gtrack_retailer_portal/screen/landing_screen.dart';
 import 'package:gtrack_retailer_portal/widgets/buttons/primary_button.dart';
@@ -90,10 +92,10 @@ class _OtpPageState extends State<OtpPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Center(
-                //   child: Image.asset(AppImages.logo),
-                // ),
-                // const SizedBox(height: 20),
+                Center(
+                  child: Image.asset(AppImages.logo),
+                ),
+                const SizedBox(height: 20),
                 const Text(
                   "Enter the OTP sent to you!",
                   textAlign: TextAlign.center,
@@ -104,7 +106,7 @@ class _OtpPageState extends State<OtpPage> {
                 ),
                 IconTextField(
                   controller: otpController,
-                  // leadingIcon: Image.asset(AppIcons.work),
+                  leadingIcon: Image.asset(AppIcons.work),
                   validator: (value) {
                     if (value!.isEmpty) {
                       return "The field is required";
